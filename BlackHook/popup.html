@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  width: 420px;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* RAIN BACKGROUND */
+.container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  --c: #9b30ff;
+  background-color: #070707;
+  background-image:
+    radial-gradient(4px 100px at 0px 235px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 235px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 117.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 252px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 252px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 126px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 150px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 150px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 75px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 253px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 253px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 126.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 204px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 204px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 102px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 134px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 134px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 67px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 179px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 179px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 89.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 299px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 299px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 149.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 215px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 215px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 107.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 281px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 281px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 140.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 158px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 158px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 79px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 210px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 210px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 105px, var(--c) 100%, #0000 150%);
+  background-size:
+    300px 235px, 300px 235px, 300px 235px,
+    300px 252px, 300px 252px, 300px 252px,
+    300px 150px, 300px 150px, 300px 150px,
+    300px 253px, 300px 253px, 300px 253px,
+    300px 204px, 300px 204px, 300px 204px,
+    300px 134px, 300px 134px, 300px 134px,
+    300px 179px, 300px 179px, 300px 179px,
+    300px 299px, 300px 299px, 300px 299px,
+    300px 215px, 300px 215px, 300px 215px,
+    300px 281px, 300px 281px, 300px 281px,
+    300px 158px, 300px 158px, 300px 158px,
+    300px 210px, 300px 210px, 300px 210px;
+  animation: hi 150s linear infinite;
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  backdrop-filter: blur(0.5em) brightness(10);
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    #0000 0,
+    #0000 2px,
+    hsl(0 0 4%) 2px
+  );
+  background-size: 8px 8px;
+}
+
+@keyframes hi {
+  0% {
+    background-position:
+      0px 220px, 3px 220px, 151.5px 337.5px,
+      25px 24px, 28px 24px, 176.5px 150px,
+      50px 16px, 53px 16px, 201.5px 91px,
+      75px 224px, 78px 224px, 226.5px 350.5px,
+      100px 19px, 103px 19px, 251.5px 121px,
+      125px 120px, 128px 120px, 276.5px 187px,
+      150px 31px, 153px 31px, 301.5px 120.5px,
+      175px 235px, 178px 235px, 326.5px 384.5px,
+      200px 121px, 203px 121px, 351.5px 228.5px,
+      225px 224px, 228px 224px, 376.5px 364.5px,
+      250px 26px, 253px 26px, 401.5px 105px,
+      275px 75px, 278px 75px, 426.5px 180px;
+  }
+  to {
+    background-position:
+      0px 6800px, 3px 6800px, 151.5px 6917.5px,
+      25px 13632px, 28px 13632px, 176.5px 13758px,
+      50px 5416px, 53px 5416px, 201.5px 5491px,
+      75px 17175px, 78px 17175px, 226.5px 17301.5px,
+      100px 5119px, 103px 5119px, 251.5px 5221px,
+      125px 8428px, 128px 8428px, 276.5px 8495px,
+      150px 9876px, 153px 9876px, 301.5px 9965.5px,
+      175px 13391px, 178px 13391px, 326.5px 13540.5px,
+      200px 14741px, 203px 14741px, 351.5px 14848.5px,
+      225px 18770px, 228px 18770px, 376.5px 18910.5px,
+      250px 5082px, 253px 5082px, 401.5px 5161px,
+      275px 6375px, 278px 6375px, 426.5px 6480px;
+  }
+}
+
+/* UI ON TOP OF RAIN */
+.ui {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(155,48,255,0.2);
+  background: rgba(7,7,7,0.7);
+  backdrop-filter: blur(10px);
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #9333ff; border-radius: 8px; color: #b84dff; font-size: 14px;
+}
+.logo-text {
+  font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #b84dff;
+  animation: glitch 4s infinite;
+}
+@keyframes glitch {
+  0%,95%,100% { text-shadow: 0 0 12px rgba(155,48,255,.4); }
+  96% { text-shadow: 2px 0 #ff00ff44,-2px 0 #00ffff44,0 0 12px #9b30ff; }
+  97% { text-shadow: -2px 0 #ff00ff44,2px 0 #00ffff44,0 0 12px #9b30ff; }
+}
+.status-pill {
+  display: flex; align-items: center; gap: 7px; padding: 7px 14px;
+  border-radius: 999px; background: rgba(13,13,20,0.8);
+  border: 1px solid #25113d; font-size: 11px; color: #dddddd;
+}
+.pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #00ff88; box-shadow: 0 0 8px #00ff88;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+.score-section {
+  display: flex; align-items: center; gap: 20px; padding: 24px 18px;
+  border-bottom: 1px solid rgba(155,48,255,0.1);
+  background: rgba(7,7,7,0.5);
+  backdrop-filter: blur(10px);
+}
+.score-ring { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+.score-ring svg { transform: rotate(-90deg); }
+.score-number {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-family: 'Share Tech Mono', monospace; font-size: 24px;
+  color: #b84dff; text-shadow: 0 0 10px rgba(155,48,255,.5);
+}
+.score-info { flex: 1; min-width: 0; }
+.score-label { font-size: 11px; letter-spacing: 2px; color: #666; }
+.score-status {
+  margin-top: 5px; font-size: 32px; font-weight: 700;
+  color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,.3);
+}
+.score-url {
+  margin-top: 8px; font-size: 11px; color: #777;
+  font-family: 'Share Tech Mono', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.threats-section {
+  padding: 18px;
+  background: rgba(7,7,7,0.5);
+  backdrop-filter: blur(10px);
+}
+.section-title { margin-bottom: 18px; font-size: 11px; letter-spacing: 3px; color: #777; }
+.threat-row {
+  display: grid; grid-template-columns: 42px 1fr 82px;
+  align-items: center; gap: 12px; padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.threat-row:last-child { border-bottom: none; }
+.threat-icon {
+  width: 42px; height: 42px; display: flex; align-items: center;
+  justify-content: center; border-radius: 12px; font-size: 14px;
+}
+.threat-icon.safe { background: rgba(0,24,16,0.8); border: 1px solid #004d2a; color: #00ff88; }
+.threat-icon.warn { background: rgba(26,18,0,0.8); border: 1px solid #664400; color: #ffaa00; }
+.threat-icon.danger { background: rgba(26,0,0,0.8); border: 1px solid #661111; color: #ff4444; }
+.threat-text { min-width: 0; overflow: hidden; }
+.threat-name {
+  font-size: 15px; font-weight: 600; color: #f0f0f0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.threat-desc {
+  margin-top: 3px; font-size: 9px; color: #666; letter-spacing: 1px;
+  font-family: 'Share Tech Mono', monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.threat-badge {
+  width: 82px; height: 36px; display: flex; align-items: center;
+  justify-content: center; border-radius: 8px;
+  font-size: 10px; letter-spacing: 1px; font-family: 'Share Tech Mono', monospace;
+}
+.threat-badge.safe { background: rgba(0,24,16,0.8); border: 1px solid #00aa55; color: #00ff88; }
+.threat-badge.warn { background: rgba(26,18,0,0.8); border: 1px solid #aa7700; color: #ffaa00; }
+.threat-badge.danger { background: rgba(26,0,0,0.8); border: 1px solid #ff3333; color: #ff4444; }
+
+.footer {
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 16px 10px;
+  border-top: 1px solid rgba(155,48,255,0.1);
+  background: rgba(7,7,7,0.7);
+  backdrop-filter: blur(10px);
+}
+.footer-stat { text-align: center; }
+.footer-num { font-size: 18px; color: #b84dff; font-family: 'Share Tech Mono', monospace; }
+.footer-lbl { margin-top: 5px; font-size: 9px; letter-spacing: 1px; color: #666; }
+.divider { width: 1px; height: 30px; background: rgba(155,48,255,0.2); }
+</style>
+</head>
+<body>
+
+<div class="container"></div>
+
+<div class="ui">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">⬡</div>
+      <div class="logo-text">BLACKHOOK</div>
+    </div>
+    <div class="status-pill">
+      <div class="pulse"></div>
+      ACTIVE
+    </div>
+  </div>
+
+  <div class="score-section">
+    <div class="score-ring">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="30" fill="none" stroke="#1a0a2e" stroke-width="6"/>
+        <circle id="scoreCircle" cx="40" cy="40" r="30" fill="none" stroke="#00ff88"
+          stroke-width="6" stroke-dasharray="188" stroke-dashoffset="188"
+          stroke-linecap="round"/>
+      </svg>
+      <div class="score-number" id="scoreNum">--</div>
+    </div>
+    <div class="score-info">
+      <div class="score-label">THREAT LEVEL</div>
+      <div class="score-status" id="scoreStatus">SCANNING</div>
+      <div class="score-url" id="currentUrl">loading...</div>
+    </div>
+  </div>
+
+  <div class="threats-section">
+    <div class="section-title">THREAT MATRIX</div>
+    <div class="threat-row">
+      <div class="threat-icon safe" id="fullscreenIcon">⛶</div>
+      <div class="threat-text">
+        <div class="threat-name">Fullscreen Trap</div>
+        <div class="threat-desc">FULLSCREEN_API_MONITOR</div>
+      </div>
+      <div class="threat-badge safe" id="fullscreenBadge">CLEAR</div>
+    </div>
+    <div class="threat-row">
+      <div class="threat-icon safe" id="urlIcon">◈</div>
+      <div class="threat-text">
+        <div class="threat-name">URL Spoof</div>
+        <div class="threat-desc">DOMAIN_SIMILARITY_CHECK</div>
+      </div>
+      <div class="threat-badge safe" id="urlBadge">CLEAR</div>
+    </div>
+    <div class="threat-row">
+      <div class="threat-icon safe" id="formIcon">⬡</div>
+      <div class="threat-text">
+        <div class="threat-name">Form Hijack</div>
+        <div class="threat-desc">INPUT_FIELD_ANALYSIS</div>
+      </div>
+      <div class="threat-badge safe" id="formBadge">CLEAR</div>
+    </div>
+    <div class="threat-row">
+      <div class="threat-icon warn" id="httpIcon">◬</div>
+      <div class="threat-text">
+        <div class="threat-name">No Encryption</div>
+        <div class="threat-desc">SSL_CERTIFICATE_CHECK</div>
+      </div>
+      <div class="threat-badge warn" id="httpBadge">WARN</div>
+    </div>
+    <div class="threat-row">
+      <div class="threat-icon safe" id="clipIcon">⬢</div>
+      <div class="threat-text">
+        <div class="threat-name">Clipboard Hook</div>
+        <div class="threat-desc">PASTE_INJECTION_MONITOR</div>
+      </div>
+      <div class="threat-badge safe" id="clipBadge">CLEAR</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-stat">
+      <div class="footer-num" id="siteCount">0</div>
+      <div class="footer-lbl">SITES SCANNED</div>
+    </div>
+    <div class="divider"></div>
+    <div class="footer-stat">
+      <div class="footer-num" id="threatCount">0</div>
+      <div class="footer-lbl">THREATS FOUND</div>
+    </div>
+    <div class="divider"></div>
+    <div class="footer-stat">
+      <div class="footer-num">v1.0</div>
+      <div class="footer-lbl">BUILD</div>
+    </div>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

