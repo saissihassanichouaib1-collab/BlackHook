@@ -45,7 +45,7 @@ Phishing attacks are becoming increasingly sophisticated. Modern attackers use t
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/blackhook.git
+git clone https://github.com/saissihassanichouaib1-collab/blackhook.git
 ```
 
 2. Open your browser (Chrome recommended)
